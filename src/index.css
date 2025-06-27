@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/*  toast style reset */
+[data-sonner-toast] {
+  max-width: 600px;
+  width: 100%;
+}

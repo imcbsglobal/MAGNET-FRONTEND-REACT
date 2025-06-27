@@ -1,8 +1,42 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
+import { login } from "../services/auth.api";
+import { useAuthStore } from "../stores/useAuthStore";
+import { useLoadingStore } from "../stores/useLoadingStore";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { setToken, setUser } = useAuthStore();
+  const { setLoading } = useLoadingStore();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await login({ id: userId.trim(), pass: password.trim() });
+      setToken(res.token);
+      setUser(res.user_id);
+
+      navigate("/marks");
+    } catch (err: any) {
+      if (err.response) {
+        setError(err.response.data.error || "Login failed.");
+      } else {
+        setError("Something went wrong. Check connection.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-[#f9fafb]">
@@ -11,7 +45,13 @@ const Login = () => {
           Login
         </h2>
 
-        <form className="space-y-6">
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Username */}
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-600">
@@ -20,7 +60,9 @@ const Login = () => {
             <input
               type="text"
               placeholder="Enter username"
+              onChange={(e) => setUserId(e.target.value)}
               className="w-full px-4 py-3 border border-gray-400 rounded-md outline-none focus:border-[#2c7be5] focus:ring-2 focus:ring-[#2c7be5] transition-all duration-200"
+              required
             />
           </div>
 
@@ -33,12 +75,19 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter password"
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-400 rounded-md outline-none focus:border-[#2c7be5] focus:ring-2 focus:ring-[#2c7be5] transition-all duration-200"
+                required
               />
               <button
                 type="button"
-                className="absolute right-3 text-2xl top-1/2 -translate-y-1/2 cursor-pointer text-gray-600"
                 onClick={() => setShowPassword(!showPassword)}
+                className={clsx(
+                  "absolute right-3 top-1/2 -translate-y-1/2 text-2xl cursor-pointer transition",
+                  showPassword
+                    ? "text-blue-600"
+                    : "text-gray-600 hover:text-blue-600"
+                )}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
