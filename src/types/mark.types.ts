@@ -1,17 +1,17 @@
 export interface Mark {
   slno: string;
-  studentName: string;
   admission: string;
-  className: string;
+  class_field: string;
   division: string;
   subject: string;
-  subjectName: string;
-  assessment: string;
-  assessmentName: string;
+  subject_name: string;
+  assessmentitem: string;
+  assessmentitem_name: string;
   term: string;
   part: string;
+  student_name: string;
   mark: number;
-  maxMark: number;
+  maxmark: number;
   grade: string;
-  date: string;
+  edate: string;
 }
