@@ -16,6 +16,7 @@ const MarksView = () => {
   const [filters, setFilters] = useState<MarksFilterState>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [loadingFilter, setLoadingFilter] = useState<string | null>(null);
 
   // Query for marks data
   const { data, isLoading, isError } = useMarksQuery({
@@ -60,6 +61,37 @@ const MarksView = () => {
     console.log("Filters reset");
   };
 
+  // New async filter change handler
+  const handleFilterChange = async (filterName: string, value: string) => {
+    setLoadingFilter(filterName);
+
+    try {
+      // Simulate API call delay or add actual dependent filter loading logic
+      // For example, if changing class should reload divisions, students, etc.
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Remove this in production
+
+      // Add your specific filter dependency logic here
+      // For example:
+      // if (filterName === 'class_field') {
+      //   await refetchDivisions(value);
+      //   await refetchStudents(value);
+      // }
+
+      // Update the filter state
+      setFilters((prev) => ({ ...prev, [filterName]: value }));
+
+      // Reset to first page when filter changes
+      setCurrentPage(1);
+
+      console.log(`Filter ${filterName} changed to:`, value);
+    } catch (error) {
+      console.error(`Error updating filter ${filterName}:`, error);
+      toast.error(`Failed to update ${filterName} filter`);
+    } finally {
+      setLoadingFilter(null);
+    }
+  };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     console.log("Page changed to:", page);
@@ -99,6 +131,8 @@ const MarksView = () => {
           setFilters={setFilters}
           onApply={handleApply}
           onReset={handleReset}
+          loadingFilter={loadingFilter}
+          onFilterChange={handleFilterChange}
         />
 
         <MarksTable

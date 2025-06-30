@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { ChevronDown, Search, X } from "lucide-react";
+import { ChevronDown, Search, X, Loader2 } from "lucide-react";
 import { useFiltersQuery } from "../hooks/useFilterMetadata";
 import type { MarksFilterState } from "../types/filter.types";
+import FilterSkeleton from "./FilterSkeleton";
 
 interface MarksFilterProps {
   filters: MarksFilterState;
   setFilters: (filters: MarksFilterState) => void;
   onApply: () => void;
   onReset: () => void;
+  // Add these new props
+  loadingFilter?: string | null; // which filter is currently loading
+  onFilterChange?: (filterName: string, value: string) => Promise<void>; // async handler
 }
 
 interface SearchableDropdownProps {
@@ -22,6 +26,9 @@ interface SearchableDropdownProps {
   }>;
   onChange: (name: string, value: string) => void;
   placeholder?: string;
+  // Add these new props
+  isLoading?: boolean;
+  disabled?: boolean;
 }
 
 const SearchableDropdown = ({
@@ -31,6 +38,8 @@ const SearchableDropdown = ({
   options,
   onChange,
   placeholder = "All",
+  isLoading = false,
+  disabled = false,
 }: SearchableDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -55,20 +64,30 @@ const SearchableDropdown = ({
       <div className="relative">
         <button
           type="button"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white text-left flex items-center justify-between transition-colors duration-200 hover:border-gray-400"
-          onClick={() => setIsOpen(!isOpen)}
+          disabled={disabled}
+          className={`w-full border border-gray-300 rounded-lg px-3 py-2 outline-none bg-white text-left flex items-center justify-between transition-colors duration-200 ${
+            disabled
+              ? "cursor-not-allowed opacity-50 bg-gray-100"
+              : "focus:border-blue-500 focus:ring-2 focus:ring-blue-200 hover:border-gray-400"
+          }`}
+          onClick={() => !disabled && setIsOpen(!isOpen)}
         >
           <span className="truncate">
             {selectedOption ? selectedOption.display : placeholder}
           </span>
-          <ChevronDown
-            className={`h-4 w-4 transition-transform duration-200 ${
-              isOpen ? "rotate-180" : ""
-            }`}
-          />
+          <div className="flex items-center gap-2">
+            {isLoading && (
+              <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+            )}
+            <ChevronDown
+              className={`h-4 w-4 transition-transform duration-200 ${
+                isOpen ? "rotate-180" : ""
+              }`}
+            />
+          </div>
         </button>
 
-        {isOpen && (
+        {isOpen && !disabled && (
           <>
             <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-hidden">
               {/* Search Input */}
@@ -110,11 +129,6 @@ const SearchableDropdown = ({
                     <div className="font-medium text-gray-900 hover:text-blue-500 ">
                       {option.display}
                     </div>
-                    {/* {option.code && (
-                      <div className="text-xs text-gray-500 mt-1">
-                        Code: {option.code}
-                      </div>
-                    )} */}
                   </div>
                 ))}
                 {filteredOptions.length === 0 && search && (
@@ -137,38 +151,25 @@ const SearchableDropdown = ({
   );
 };
 
-const MarksFilter = ({ filters, setFilters, onReset }: MarksFilterProps) => {
+const MarksFilter = ({
+  filters,
+  setFilters,
+  onReset,
+  loadingFilter = null,
+  onFilterChange,
+}: MarksFilterProps) => {
   const { data, isLoading } = useFiltersQuery();
 
-  const handleDropdownChange = (name: string, value: string) => {
-    setFilters({ ...filters, [name]: value });
+  const handleDropdownChange = async (name: string, value: string) => {
+    if (onFilterChange) {
+      await onFilterChange(name, value);
+    } else {
+      setFilters({ ...filters, [name]: value });
+    }
   };
 
   if (isLoading) {
-    return (
-      <div className="bg-gray-50 p-6 rounded-xl border border-gray-300 mb-8">
-        {/* Skeleton for filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="flex flex-col gap-2">
-              <div className="h-4 bg-gray-300 rounded animate-pulse mb-2"></div>
-              <div className="h-11 bg-gray-200 rounded-lg animate-pulse"></div>
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="flex flex-col gap-2">
-              <div className="h-4 bg-gray-300 rounded animate-pulse mb-2"></div>
-              <div className="h-11 bg-gray-200 rounded-lg animate-pulse"></div>
-            </div>
-          ))}
-          <div className="flex items-end gap-3">
-            <div className="flex-1 h-11 bg-gray-300 rounded-lg animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <FilterSkeleton />;
   }
 
   // Prepare options for each dropdown
@@ -209,6 +210,8 @@ const MarksFilter = ({ filters, setFilters, onReset }: MarksFilterProps) => {
           value={filters.class_field || ""}
           options={classOptions}
           onChange={handleDropdownChange}
+          isLoading={loadingFilter === "class_field"}
+          disabled={loadingFilter !== null && loadingFilter !== "class_field"}
         />
 
         <SearchableDropdown
@@ -217,6 +220,8 @@ const MarksFilter = ({ filters, setFilters, onReset }: MarksFilterProps) => {
           value={filters.division || ""}
           options={divisionOptions}
           onChange={handleDropdownChange}
+          isLoading={loadingFilter === "division"}
+          disabled={loadingFilter !== null && loadingFilter !== "division"}
         />
 
         <SearchableDropdown
@@ -225,6 +230,8 @@ const MarksFilter = ({ filters, setFilters, onReset }: MarksFilterProps) => {
           value={filters.admission || ""}
           options={studentOptions}
           onChange={handleDropdownChange}
+          isLoading={loadingFilter === "admission"}
+          disabled={loadingFilter !== null && loadingFilter !== "admission"}
         />
 
         <SearchableDropdown
@@ -233,6 +240,8 @@ const MarksFilter = ({ filters, setFilters, onReset }: MarksFilterProps) => {
           value={filters.subject || ""}
           options={subjectOptions}
           onChange={handleDropdownChange}
+          isLoading={loadingFilter === "subject"}
+          disabled={loadingFilter !== null && loadingFilter !== "subject"}
         />
       </div>
 
@@ -244,6 +253,8 @@ const MarksFilter = ({ filters, setFilters, onReset }: MarksFilterProps) => {
           value={filters.term || ""}
           options={termOptions}
           onChange={handleDropdownChange}
+          isLoading={loadingFilter === "term"}
+          disabled={loadingFilter !== null && loadingFilter !== "term"}
         />
 
         <SearchableDropdown
@@ -252,6 +263,8 @@ const MarksFilter = ({ filters, setFilters, onReset }: MarksFilterProps) => {
           value={filters.part || ""}
           options={partOptions}
           onChange={handleDropdownChange}
+          isLoading={loadingFilter === "part"}
+          disabled={loadingFilter !== null && loadingFilter !== "part"}
         />
 
         <SearchableDropdown
@@ -260,13 +273,22 @@ const MarksFilter = ({ filters, setFilters, onReset }: MarksFilterProps) => {
           value={filters.assessmentitem || ""}
           options={assessmentOptions}
           onChange={handleDropdownChange}
+          isLoading={loadingFilter === "assessmentitem"}
+          disabled={
+            loadingFilter !== null && loadingFilter !== "assessmentitem"
+          }
         />
 
         {/* Buttons */}
         <div className="flex items-end gap-3">
           <button
             type="button"
-            className="flex-1 bg-gray-600 text-white px-4 py-2.5 rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium min-w-20 cursor-pointer"
+            disabled={loadingFilter !== null}
+            className={`flex-1 px-4 py-2.5 rounded-lg font-medium min-w-20 transition-colors duration-200 ${
+              loadingFilter !== null
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gray-600 hover:bg-gray-700 cursor-pointer"
+            } text-white`}
             onClick={onReset}
           >
             Reset
