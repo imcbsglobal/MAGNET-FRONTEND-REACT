@@ -232,6 +232,7 @@ const MarksFilter = ({
           onChange={handleDropdownChange}
           isLoading={loadingFilter === "admission"}
           disabled={loadingFilter !== null && loadingFilter !== "admission"}
+          placeholder={`All (${data?.student_count || 0})`}
         />
 
         <SearchableDropdown

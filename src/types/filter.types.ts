@@ -21,6 +21,7 @@ export interface FilterMetadata {
   divisions: string[];
   parts: string[];
   classes: string[];
+  student_count: number;
 }
 
 export interface MarksFilterState {

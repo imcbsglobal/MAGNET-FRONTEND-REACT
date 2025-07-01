@@ -95,7 +95,7 @@ const MarksTable = ({
       }));
 
       // Update the mark object for display
-      mark.mark = newMark;
+      // mark.mark = newMark;
 
       // Show success state
       setSuccessId(mark.slno);
@@ -119,16 +119,11 @@ const MarksTable = ({
   };
 
   const getDisplayMark = (mark: Mark) => {
-    const rawValue =
-      updatedMarks[mark.slno] !== undefined
-        ? updatedMarks[mark.slno]
-        : mark.mark;
+    const value = Number(updatedMarks[mark.slno] ?? mark.mark);
 
-    const value = Number(rawValue);
+    if (isNaN(value)) return "-"; // Broken or empty data fallback
 
-    if (isNaN(value)) return "-"; // If data is broken, show dash
-
-    return value.toFixed(3); // ✅ 3 decimal places
+    return value.toFixed(3); // Always show 3 decimal places
   };
 
   // const isMarkUpdated = (mark: Mark) => {
@@ -213,107 +208,114 @@ const MarksTable = ({
                     : ""
                 }`}
               >
-                <td className="p-2 font-semibold text-gray-900 bg-[#ffe3e3] border-b border-gray-300">
+                <td className="p-2 font-semibold text-gray-900 bg-[#ffe3e3] border border-[#ffa8a8]">
                   {mark.admission}
                 </td>
-                <td className="p-2 font-semibold text-gray-900 bg-[#fff3bf] border-b border-gray-300">
+                <td className="p-2 font-semibold text-gray-900 bg-[#fff3bf] border border-[#ffe066]">
                   {mark.student_name}
                 </td>
-                <td className="p-2 text-gray-700 border-b border-gray-300 text-center">
+                <td className="p-2 text-gray-700 border border-gray-300 text-center">
                   {mark.class_field}
                 </td>
-                <td className="p-2 text-gray-700 border-b border-gray-300 text-center">
+                <td className="p-2 text-gray-700 border border-gray-300 text-center">
                   {mark.division}
                 </td>
-                <td className="p-2 text-gray-700 border-b border-gray-300">
+                <td className="p-2 text-gray-700 border border-gray-300">
                   {mark.subject_name}
                 </td>
-                <td className="p-2 text-gray-700 border-b border-gray-300">
+                <td className="p-2 text-gray-700 border border-gray-300">
                   {mark.term}
                 </td>
-                <td className="p-2 text-gray-700 border-b border-gray-300">
+                <td className="p-2 text-gray-700 border border-gray-300">
                   {mark.part}
                 </td>
-                <td className="p-2 text-gray-700 border-b border-gray-300">
+                <td className="p-2 text-gray-700 border-b border-l border-gray-300">
                   {mark.assessmentitem_name}
                 </td>
 
                 <td className="p-2 relative bg-blue-100 font-semibold text-right border border-blue-600">
-                  {editingId === mark.slno ? (
-                    <div className="flex items-center justify-center gap-2 min-w-[180px]">
-                      <div className="relative flex-1">
-                        <input
-                          type="number"
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          className="w-full px-3 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-500 text-center font-semibold bg-white shadow-sm"
-                          autoFocus
-                          min="0"
-                          max={mark.maxmark}
-                          step="0.001"
+                  <div
+                    className="flex items-center justify-center gap-2 min-w-[180px]"
+                    // ✅ Same wrapper for both states
+                  >
+                    {editingId === mark.slno ? (
+                      <>
+                        <div className="relative flex-1">
+                          <input
+                            type="number"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-500 text-center font-semibold bg-white shadow-sm"
+                            autoFocus
+                            min="0"
+                            max={mark.maxmark}
+                            step="0.001"
+                            disabled={isUpdatingMark}
+                            style={{ fontSize: "14px" }}
+                          />
+                          {isUpdatingMark && (
+                            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                              <AiOutlineLoading3Quarters className="h-4 w-4 animate-spin text-blue-600" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Save Button */}
+                        <button
+                          type="button"
+                          onClick={() => handleEditSave(mark)}
                           disabled={isUpdatingMark}
-                          style={{ fontSize: "14px" }}
-                        />
-                        {isUpdatingMark && (
-                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                            <AiOutlineLoading3Quarters className="h-4 w-4 animate-spin text-blue-600" />
+                          className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Save"
+                        >
+                          <Check className="h-4 w-4" />
+                        </button>
+
+                        {/* Cancel Button */}
+                        <button
+                          onClick={handleEditCancel}
+                          disabled={isUpdatingMark}
+                          className="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Cancel"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </>
+                    ) : (
+                      <div
+                        onClick={() => handleMarkClick(mark)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-blue-50 hover:ring-2 hover:ring-blue-200 flex-1 justify-center ${
+                          successId === mark.slno
+                            ? "bg-green-50 ring-2 ring-green-200"
+                            : "hover:bg-gray-100"
+                        }`}
+                        title="Click to edit mark"
+                      >
+                        <span
+                          className={`font-semibold text-lg ${
+                            successId === mark.slno
+                              ? "text-green-600"
+                              : "text-blue-600"
+                          }`}
+                          style={{ minWidth: "60px", textAlign: "center" }}
+                        >
+                          {getDisplayMark(mark)}
+                        </span>
+
+                        {successId === mark.slno && (
+                          <div className="flex items-center gap-1">
+                            <IoCheckmarkCircle className="h-4 w-4 text-green-500" />
+                            <span className="text-xs text-green-600 font-medium">
+                              Saved!
+                            </span>
                           </div>
                         )}
                       </div>
-
-                      {/* Modern Save Button */}
-                      <button
-                        onClick={() => handleEditSave(mark)}
-                        disabled={isUpdatingMark}
-                        className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Save"
-                      >
-                        <Check className="h-4 w-4" />
-                      </button>
-
-                      {/* Modern Cancel Button */}
-                      <button
-                        onClick={handleEditCancel}
-                        disabled={isUpdatingMark}
-                        className="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Cancel"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => handleMarkClick(mark)}
-                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-blue-50 hover:ring-2 hover:ring-blue-200 min-w-[120px] justify-center ${
-                        successId === mark.slno
-                          ? "bg-green-50 ring-2 ring-green-200"
-                          : "hover:bg-gray-100"
-                      }`}
-                      title="Click to edit mark"
-                    >
-                      <span
-                        className={`font-semibold text-lg ${
-                          successId === mark.slno
-                            ? "text-green-600"
-                            : "text-blue-600"
-                        }`}
-                        style={{ minWidth: "60px", textAlign: "center" }}
-                      >
-                        {getDisplayMark(mark)}
-                      </span>
-
-                      {successId === mark.slno && (
-                        <div className="flex items-center gap-1">
-                          <IoCheckmarkCircle className="h-4 w-4 text-green-500" />
-                          <span className="text-xs text-green-600 font-medium">
-                            Saved!
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </td>
-                <td className="p-2 text-gray-600 font-semibold bg-[#d3f9d8] text-right border-b border-gray-300">
+
+                <td className="p-2 text-gray-600 font-semibold bg-[#d3f9d8] text-right border border-[#a9e34b]">
                   {mark.maxmark}
                 </td>
               </tr>

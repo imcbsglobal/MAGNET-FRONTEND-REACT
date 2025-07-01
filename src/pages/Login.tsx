@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/auth.api";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useLoadingStore } from "../stores/useLoadingStore";
+import logo from "../assets/logo-dummy.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ const Login = () => {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [role, setRole] = useState<"teacher" | "parent">("teacher");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,69 +40,83 @@ const Login = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-[#f9fafb]">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-[500px] mx-4">
-        <h2 className="text-3xl font-bold mb-6 text-center text-[#2c7be5]">
-          Login
-        </h2>
+    <section className="min-h-screen flex items-center justify-center bg-[#f9fafb] px-4">
+      <div className="bg-white rounded-2xl shadow-xl flex flex-col md:flex-row w-full max-w-[900px] min-h-[500px]">
+        {/* Left Side */}
+        <div className="md:w-1/2 w-full flex flex-col items-center justify-center p-8 bg-white rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none">
+          <img src={logo} alt="Logo" className="w-20 mb-4" />
+          <h1 className="text-2xl md:text-3xl font-bold text-[#fb923c] mb-2">
+            MAGNET SCHOOL
+          </h1>
+          <p className="text-black text-center">
+            Welcome to the School Management Portal
+          </p>
+        </div>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-            {error}
-          </div>
-        )}
-
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Username */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-600">
-              Username
-            </label>
-            <input
-              type="text"
-              placeholder="Enter username"
-              onChange={(e) => setUserId(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-400 rounded-md outline-none focus:border-[#2c7be5] focus:ring-2 focus:ring-[#2c7be5] transition-all duration-200"
-              required
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-600">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter password"
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-400 rounded-md outline-none focus:border-[#2c7be5] focus:ring-2 focus:ring-[#2c7be5] transition-all duration-200"
-                required
-              />
+        {/* Right Side */}
+        <div className="md:w-1/2 w-full flex flex-col items-center justify-center p-8 bg-[#fb923c] rounded-b-2xl md:rounded-r-2xl md:rounded-bl-none">
+          {/* Toggle */}
+          <div className="flex justify-center mb-6">
+            <div className="flex items-center bg-white p-1 rounded-full">
               <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className={clsx(
-                  "absolute right-3 top-1/2 -translate-y-1/2 text-2xl cursor-pointer transition",
-                  showPassword
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-blue-600"
-                )}
+                onClick={() => setRole("parent")}
+                className={`px-5 py-1.5 rounded-full text-sm  cursor-pointer transition-all duration-300 ${
+                  role === "parent"
+                    ? "bg-[#fde047] text-black"
+                    : "text-[#fb923c] hover:bg-[#fde047]/30"
+                }`}
               >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                Parent
+              </button>
+              <button
+                onClick={() => setRole("teacher")}
+                className={`px-5 py-1.5 rounded-full text-sm  cursor-pointer transition-all duration-300 ${
+                  role === "teacher"
+                    ? "bg-[#fde047] text-black"
+                    : "text-[#fb923c] hover:bg-[#fde047]/30"
+                }`}
+              >
+                Teacher
               </button>
             </div>
           </div>
 
-          {/* Login Button */}
-          <button
-            type="submit"
-            className="w-full bg-[#2c7be5] text-white px-4 py-2 rounded-md hover:bg-blue-700 transition cursor-pointer"
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5 w-full max-w-[400px] transition-all duration-500"
           >
-            Login
-          </button>
-        </form>
+            {/* Username / Admission */}
+            <input
+              type="text"
+              onChange={(e) => setUserId(e.target.value)}
+              placeholder={role === "parent" ? "Admission Number" : "Username"}
+              className="w-full px-4 py-3 border-2 border-white rounded-md bg-transparent placeholder-white text-white focus:outline-none focus:border-[#fde047] transition-all"
+            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full px-4 py-3 border-2 border-white rounded-md bg-transparent placeholder-white text-white focus:outline-none focus:border-[#fde047] transition-all"
+              />
+              <div
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-white"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
+              </div>
+            </div>
+            <button className="w-full py-2 bg-[#fde047] hover:bg-yellow-400 text-black rounded-full shadow-md hover:shadow-lg transition-all cursor-pointer">
+              {role === "parent" ? "Parent Login" : "Teacher Login"}
+            </button>
+            {error && (
+              <div className="bg-red-100 text-red-700 p-2 rounded text-center">
+                {error}
+              </div>
+            )}
+          </form>
+        </div>
       </div>
     </section>
   );

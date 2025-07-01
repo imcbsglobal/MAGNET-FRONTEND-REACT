@@ -37,8 +37,11 @@ export const useUpdateMarkMutation = () => {
     mutationFn: ({ id, mark }: { id: string; mark: number }) =>
       updateMark(id, mark),
     onSuccess: () => {
-      // Invalidate and refetch marks queries
-      queryClient.invalidateQueries({ queryKey: ["marks"] });
+      // Use refetch instead of invalidate to avoid loading state
+      queryClient.refetchQueries({
+        queryKey: ["marks"],
+        type: "active", // Only refetch currently mounted queries
+      });
       toast.success("Mark updated successfully!");
     },
     onError: (error: any) => {

@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #f97316; /* 🔥 Orange 500 */
+  --color-secondary: #fde047; /* 🌟 Yellow 300 */
+  --color-background: #f9fafb;
+}
+
+#f9fafb
+
 /*  toast style reset */
 [data-sonner-toast] {
   max-width: 600px;
