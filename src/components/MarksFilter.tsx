@@ -158,7 +158,11 @@ const MarksFilter = ({
   loadingFilter = null,
   onFilterChange,
 }: MarksFilterProps) => {
-  const { data, isLoading } = useFiltersQuery();
+  // ✅ Pass class and division filters to get correct student count
+  const { data, isLoading } = useFiltersQuery({
+    class_field: filters.class_field,
+    division: filters.division,
+  });
 
   const handleDropdownChange = async (name: string, value: string) => {
     if (onFilterChange) {
