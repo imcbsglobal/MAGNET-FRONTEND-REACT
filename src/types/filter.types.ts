@@ -32,4 +32,5 @@ export interface MarksFilterState {
   part?: string;
   assessmentitem?: string;
   admission?: string;
+  [key: string]: string | undefined;
 }

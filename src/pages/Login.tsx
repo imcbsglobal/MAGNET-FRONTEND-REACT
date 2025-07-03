@@ -60,7 +60,7 @@ const Login = () => {
             <div className="flex items-center bg-white p-1 rounded-full">
               <button
                 onClick={() => setRole("parent")}
-                className={`px-5 py-1.5 rounded-full text-sm  cursor-pointer transition-all duration-300 ${
+                className={`px-5 py-1.5 rounded-full text-sm font-semibold cursor-pointer transition-all duration-300 ${
                   role === "parent"
                     ? "bg-[#fde047] text-black"
                     : "text-[#fb923c] hover:bg-[#fde047]/30"
@@ -70,7 +70,7 @@ const Login = () => {
               </button>
               <button
                 onClick={() => setRole("teacher")}
-                className={`px-5 py-1.5 rounded-full text-sm  cursor-pointer transition-all duration-300 ${
+                className={`px-5 py-1.5 rounded-full text-sm font-semibold cursor-pointer transition-all duration-300 ${
                   role === "teacher"
                     ? "bg-[#fde047] text-black"
                     : "text-[#fb923c] hover:bg-[#fde047]/30"

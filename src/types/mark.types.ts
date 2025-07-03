@@ -14,4 +14,5 @@ export interface Mark {
   maxmark: number;
   grade: string;
   edate: string;
+  [key: string]: any;
 }

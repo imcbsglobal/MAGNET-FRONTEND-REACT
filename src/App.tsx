@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import MarksView from "./pages/MarksView";
+import Dashboard from "./pages/Dashboard";
+import SettingsPage from "./pages/SettingsPage";
 import GlobalLoader from "./components/GlobalLoader";
 import SplashScreen from "./components/SplashScreen";
+import Attendance from "./pages/Attendance";
 import { useAuthStore } from "./stores/useAuthStore";
 
 function App() {
@@ -28,22 +31,38 @@ function App() {
     <BrowserRouter>
       <GlobalLoader />
       <Routes>
-        {/* If not logged in, show Login else redirect to Marks */}
+        {/* Login route → redirect to dashboard if logged in */}
         <Route
           path="/"
-          element={!token ? <Login /> : <Navigate to="/marks" replace />}
+          element={!token ? <Login /> : <Navigate to="/dashboard" replace />}
         />
 
-        {/* If logged in, show Marks else redirect to Login */}
+        {/* Dashboard route */}
+        <Route
+          path="/dashboard"
+          element={token ? <Dashboard /> : <Navigate to="/" replace />}
+        />
+
+        {/* Marks page */}
         <Route
           path="/marks"
           element={token ? <MarksView /> : <Navigate to="/" replace />}
         />
+        {/* Attendance page */}
+        <Route
+          path="/attendance"
+          element={token ? <Attendance /> : <Navigate to="/" replace />}
+        />
+        {/* Settings page */}
+        <Route
+          path="/settings"
+          element={token ? <SettingsPage /> : <Navigate to="/" replace />}
+        />
 
-        {/* Optional — Catch any unknown routes */}
+        {/* Catch-all fallback */}
         <Route
           path="*"
-          element={<Navigate to={token ? "/marks" : "/"} replace />}
+          element={<Navigate to={token ? "/dashboard" : "/"} replace />}
         />
       </Routes>
     </BrowserRouter>
