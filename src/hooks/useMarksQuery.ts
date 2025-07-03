@@ -75,22 +75,3 @@ export const useBulkUpdateMarksMutation = () => {
 };
 
 // Optional: Hook for testing different bulk update endpoints
-export const useTestBulkUpdateMutation = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (updates: { slno: string; mark: number }[]) => {
-      // Import the test function dynamically to avoid circular imports
-      // const { testBulkUpdateEndpoints } = await import("../services/mark.api");
-      // return testBulkUpdateEndpoints(updates);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["marks"] });
-      toast.success("Bulk update test successful");
-    },
-    onError: (error) => {
-      console.error("All bulk update tests failed:", error);
-      toast.error("All bulk update methods failed");
-    },
-  });
-};
