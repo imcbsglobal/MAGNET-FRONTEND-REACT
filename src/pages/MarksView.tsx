@@ -117,7 +117,7 @@ const MarksView = () => {
           <div className="flex gap-3 items-center">
             <button
               onClick={() => navigate("/settings")}
-              className="flex items-center gap-2 bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:shadow-md px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+              className="flex items-center gap-2 bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:shadow-md px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer"
               title="Change edit mode"
             >
               <Settings className="h-4 w-4" />

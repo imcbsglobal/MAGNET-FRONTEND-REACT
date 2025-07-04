@@ -29,8 +29,6 @@ export const useMarksQuery = ({
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
-    // Remove onError - it's deprecated in newer versions of TanStack Query
-    // Use onError in the component instead or handle errors in the component
   });
 };
 
@@ -73,5 +71,3 @@ export const useBulkUpdateMarksMutation = () => {
     },
   });
 };
-
-// Optional: Hook for testing different bulk update endpoints

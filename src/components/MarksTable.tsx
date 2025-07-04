@@ -259,6 +259,29 @@ const MarksTable = ({
 
   const hasBulkChanges = Object.keys(bulkEdits).length > 0;
 
+  const handleBulkKeyDown = (
+    e: React.KeyboardEvent,
+    mark: Mark, // Changed parameter name for clarity
+    currentIndex: number
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextIndex = currentIndex + 1;
+      if (data && nextIndex < data.results.length) {
+        // Added data check
+        const nextSlno = data.results[nextIndex].slno;
+        // Focus the next input
+        const nextInput = document.querySelector(
+          `input[data-slno="${nextSlno}"]`
+        ) as HTMLInputElement;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+    }
+    console.debug(mark);
+  };
+
   // Add debug logging
   console.log("MarksTable props:", {
     onMarkUpdate: typeof onMarkUpdate,
@@ -436,7 +459,7 @@ const MarksTable = ({
                                 autoFocus
                                 min="0"
                                 max={mark.maxmark}
-                                step="0.001"
+                                step="1"
                                 disabled={isUpdatingMark}
                                 style={{ fontSize: "14px" }}
                               />
@@ -508,7 +531,9 @@ const MarksTable = ({
                             onChange={(e) =>
                               handleBulkEditChange(mark, e.target.value)
                             }
+                            onKeyDown={(e) => handleBulkKeyDown(e, mark, index)} // ADD THIS
                             placeholder="New mark"
+                            data-slno={mark.slno} // ADD THIS
                             className={`w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 text-center text-sm ${
                               bulkErrors[mark.slno]
                                 ? "border-red-300 focus:ring-red-200"
@@ -518,7 +543,7 @@ const MarksTable = ({
                             }`}
                             min="0"
                             max={mark.maxmark}
-                            step="0.001"
+                            step="1" // Change from "0.001" to "1"
                             disabled={isBulkUpdating}
                           />
                           {bulkErrors[mark.slno] && (
