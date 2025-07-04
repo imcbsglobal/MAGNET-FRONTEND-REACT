@@ -9,6 +9,7 @@ export interface Mark {
   assessmentitem_name: string;
   term: string;
   part: string;
+  subperiod: string;
   student_name: string;
   mark: number;
   maxmark: number;

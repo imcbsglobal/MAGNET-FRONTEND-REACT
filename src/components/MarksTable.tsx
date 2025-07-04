@@ -376,14 +376,7 @@ const MarksTable = ({
         <table className="w-full table-auto rounded-md">
           <thead className="bg-gray-50 text-gray-800 border-b-2 border-gray-300">
             <tr>
-              <th className="p-3 text-left font-semibold">Admission No</th>
               <th className="p-3 text-left font-semibold">Student Name</th>
-              <th className="p-3 text-left font-semibold">Class</th>
-              <th className="p-3 text-left font-semibold">Division</th>
-              <th className="p-3 text-left font-semibold">Subject</th>
-              <th className="p-3 text-left font-semibold">Term</th>
-              <th className="p-3 text-left font-semibold">Part</th>
-              <th className="p-3 text-left font-semibold">Assessment</th>
               <th className="p-3 text-left font-semibold">
                 <div className="flex items-center gap-2">
                   <span>Marks</span>
@@ -394,6 +387,13 @@ const MarksTable = ({
                 </div>
               </th>
               <th className="p-3 text-left font-semibold">Max Marks</th>
+              <th className="p-3 text-left font-semibold">Admission No</th>
+              <th className="p-3 text-left font-semibold">Class</th>
+              <th className="p-3 text-left font-semibold">Division</th>
+              <th className="p-3 text-left font-semibold">Subject</th>
+              <th className="p-3 text-left font-semibold">Term</th>
+              <th className="p-3 text-left font-semibold">Sub-Period</th>
+              <th className="p-3 text-center font-semibold">Assessment</th>
             </tr>
           </thead>
           <tbody className="bg-white">
@@ -417,31 +417,9 @@ const MarksTable = ({
                     : ""
                 }`}
               >
-                <td className="p-2 font-semibold text-gray-900 bg-[#ffe3e3] border border-[#ffa8a8]">
-                  {mark.admission}
-                </td>
-                <td className="p-2 font-semibold text-gray-900 bg-[#fff3bf] border border-[#ffe066]">
+                <td className="p-2 font-semibold text-gray-900 bg-[#fff3bf] border-l border-b border-[#ffe066]">
                   {mark.student_name}
                 </td>
-                <td className="p-2 text-gray-700 border border-gray-300 text-center">
-                  {mark.class_field}
-                </td>
-                <td className="p-2 text-gray-700 border border-gray-300 text-center">
-                  {mark.division}
-                </td>
-                <td className="p-2 text-gray-700 border border-gray-300">
-                  {mark.subject_name}
-                </td>
-                <td className="p-2 text-gray-700 border border-gray-300">
-                  {mark.term}
-                </td>
-                <td className="p-2 text-gray-700 border border-gray-300">
-                  {mark.part}
-                </td>
-                <td className="p-2 text-gray-700 border-b border-l border-gray-300">
-                  {mark.assessmentitem_name}
-                </td>
-
                 {/* Marks Column - Different rendering based on edit mode */}
                 <td className="p-2 relative bg-blue-100 font-semibold text-right border border-blue-600">
                   <div className="flex items-center justify-center gap-2 min-w-[180px]">
@@ -559,9 +537,30 @@ const MarksTable = ({
                     )}
                   </div>
                 </td>
-
                 <td className="p-2 text-gray-600 font-semibold bg-[#d3f9d8] text-right border border-[#a9e34b]">
                   {mark.maxmark}
+                </td>
+
+                <td className="p-2 text-right font-semibold text-gray-900 bg-[#ffe3e3] border border-[#ffa8a8]">
+                  {mark.admission}
+                </td>
+                <td className="p-2 text-gray-700 border border-gray-300 text-center">
+                  {mark.class_field}
+                </td>
+                <td className="p-2 text-gray-700 border border-gray-300 text-center">
+                  {mark.division}
+                </td>
+                <td className="p-2 text-gray-700 border border-gray-300">
+                  {mark.subject_name}
+                </td>
+                <td className="p-2 text-gray-700 border border-gray-300">
+                  {mark.term}
+                </td>
+                <td className="p-2 text-gray-700 border border-gray-300">
+                  {mark.subperiod}
+                </td>
+                <td className="p-2 text-gray-700 border-b border-l border-gray-300">
+                  {mark.assessmentitem_name}
                 </td>
               </tr>
             ))}

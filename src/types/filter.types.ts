@@ -19,7 +19,8 @@ export interface FilterMetadata {
   students: Student[];
   terms: string[];
   divisions: string[];
-  parts: string[];
+  subperiods: string[];
+  // parts: string[];
   classes: string[];
   student_count: number;
 }
@@ -29,7 +30,8 @@ export interface MarksFilterState {
   division?: string;
   subject?: string;
   term?: string;
-  part?: string;
+  // part?: string;
+  subperiod?: string;
   assessmentitem?: string;
   admission?: string;
   [key: string]: string | undefined;

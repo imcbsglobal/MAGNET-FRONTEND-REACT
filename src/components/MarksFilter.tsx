@@ -195,8 +195,10 @@ const MarksFilter = ({
     })) || [];
   const termOptions =
     data?.terms.map((term) => ({ value: term, display: term })) || [];
-  const partOptions =
-    data?.parts.map((part) => ({ value: part, display: part })) || [];
+  // const partOptions =
+  //   data?.parts.map((part) => ({ value: part, display: part })) || [];
+  const subperiodOptions =
+    data?.subperiods?.map((sp) => ({ value: sp, display: sp })) || [];
   const assessmentOptions =
     data?.assessment_items.map((item) => ({
       value: item.code,
@@ -263,13 +265,13 @@ const MarksFilter = ({
         />
 
         <SearchableDropdown
-          label="Part"
-          name="part"
-          value={filters.part || ""}
-          options={partOptions}
+          label="Subperiod" // ✅ Displayed name
+          name="subperiod" // ✅ key used in filter state and API
+          value={filters.subperiod || ""}
+          options={subperiodOptions}
           onChange={handleDropdownChange}
-          isLoading={loadingFilter === "part"}
-          disabled={loadingFilter !== null && loadingFilter !== "part"}
+          isLoading={loadingFilter === "subperiod"}
+          disabled={loadingFilter !== null && loadingFilter !== "subperiod"}
         />
 
         <SearchableDropdown
