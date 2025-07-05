@@ -8,6 +8,6 @@ interface SettingsStore {
 }
 
 export const useSettingsStore = create<SettingsStore>((set) => ({
-  editMode: "single",
+  editMode: "bulk",
   setEditMode: (mode) => set({ editMode: mode }),
 }));
