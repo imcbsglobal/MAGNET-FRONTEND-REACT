@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../services/auth.api";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useLoadingStore } from "../stores/useLoadingStore";
+import LoginIcons from "../components/LoginIcons";
 import logo from "../assets/logo-dummy.png";
 
 const Login = () => {
@@ -40,8 +41,9 @@ const Login = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-[#f9fafb] px-4">
-      <div className="bg-white rounded-2xl shadow-xl flex flex-col md:flex-row w-full max-w-[900px] min-h-[500px]">
+    <section className="min-h-screen  flex items-center justify-center bg-[#f9fafb] px-4">
+      <LoginIcons />
+      <div className="z-10 bg-white rounded-2xl shadow-xl flex flex-col md:flex-row w-full max-w-[900px] min-h-[500px]">
         {/* Left Side */}
         <div className="md:w-1/2 w-full flex flex-col items-center justify-center p-8 bg-white rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none">
           <img src={logo} alt="Logo" className="w-20 mb-4" />
