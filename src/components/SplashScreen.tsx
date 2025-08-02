@@ -1,4 +1,4 @@
-import logo from "../assets/logo-dummy.png";
+import logo from "../assets/magnet-logo.png";
 
 const SplashScreen = () => {
   return (
